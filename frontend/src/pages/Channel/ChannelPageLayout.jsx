@@ -144,9 +144,9 @@ function ChannelPage() {
                 <span>내 채널</span>
               </div>
             </div>
-            <div className="my-2">
+            <div className="my-0.5">
               <NavLink to={`/channel/feed/${"내아이디"}`}>
-                <button className="w-10 h-10 mx-auto my-2 bg-gray-300 rounded-full"></button>
+                <button className="w-10 h-10 mx-auto my-0.5 bg-gray-300 rounded-full"></button>
               </NavLink>
             </div>
             {/* </ChannelSubExplorer> */}
