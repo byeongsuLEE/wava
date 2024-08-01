@@ -26,7 +26,6 @@ function FeedAroundPage() {
   return (
     <div className="flex h-full">
       <div className="flex flex-col flex-1">
-        <h1 className="text-center font-bold text-2xl my-6">둘러보기</h1>
         <FeedSearchBar searchHandle={searchHandle} />
         <ContentItemGrid
           contents={contents}

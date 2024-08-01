@@ -4,8 +4,9 @@ import {
   ChevronDoubleRightIcon,
   HeartIcon as EmptyHeart,
   ChatBubbleLeftIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
 } from "@heroicons/react/24/outline";
-import ArrowButton from "./ArrowButton";
 import { HeartIcon as FullHeart } from "@heroicons/react/24/solid";
 
 const ContentDrawer = ({
@@ -16,89 +17,103 @@ const ContentDrawer = ({
   onRightClick,
 }) => {
   const isMobile = useDeviceStore((state) => state.isMobile);
-  // 여기서 데이터 받아옴...
+
   useEffect(() => {
-    // 대충 받아오는 코드 위치
+    // 여기서 데이터를 받아오는 로직을 구현합니다.
   }, [content]);
 
   return (
-    <div className="z-20">
-      <div className="drawer drawer-end">
-        <input
-          type="checkbox"
-          className="drawer-toggle"
-          checked={isOpen}
-          readOnly
+    <div className="drawer drawer-end z-20">
+      <input
+        type="checkbox"
+        className="drawer-toggle"
+        checked={isOpen}
+        readOnly
+      />
+      <div className="drawer-side">
+        <label
+          className="drawer-overlay"
+          style={{ backgroundColor: isOpen ? "#0003" : "transparent" }}
+          onClick={onClose}
         />
-
-        <div className="drawer-side ">
-          <label
-            className="drawer-overlay flexjustify-end items-center"
-            style={
-              isOpen
-                ? { backgroundColor: "#0003" }
-                : { backgroundColor: "transparent" }
-            }
+        <div
+          className={`${
+            isMobile ? "w-11/12" : "w-2/3"
+          } bg-white h-full p-6 flex flex-col`}
+        >
+          <button
             onClick={onClose}
-          ></label>
-
-          <div
-            className={`${
-              isMobile ? "w-10/12" : "w-9/12 sm:w-7/12"
-            } self-center bg-white text-base-content h-[90%] flex relative  rounded-xl m-2`}
+            className="self-start mb-4 p-2 rounded-full hover:bg-gray-200 transition-colors"
           >
-            {content && isOpen && (
-              <>
-                {/* 닫기 버튼 */}
-                <div
-                  className="py-5 px-1 rounded-tl-lg rounded-bl-lg border-white  bg-white cursor-pointer absolute -translate-x-[99%] top-[50%] -translate-y-full "
-                  onClick={onClose}
+            <ChevronDoubleRightIcon className="h-6 w-6" />
+          </button>
+
+          {content && isOpen && (
+            <div className="flex-grow flex flex-col items-center overflow-y-auto">
+              <div className="w-full max-w-lg aspect-square relative mb-6">
+                <img
+                  src={content.imageUrl}
+                  alt="Content"
+                  className="w-full h-full object-cover rounded-lg"
+                />
+                <button
+                  onClick={onLeftClick}
+                  className="absolute top-1/2 left-2 -translate-y-1/2 bg-white rounded-full p-1 shadow-md"
                 >
-                  <ChevronDoubleRightIcon height="30" />
-                </div>
+                  <ChevronLeftIcon className="h-6 w-6" />
+                </button>
+                <button
+                  onClick={onRightClick}
+                  className="absolute top-1/2 right-2 -translate-y-1/2 bg-white rounded-full p-1 shadow-md"
+                >
+                  <ChevronRightIcon className="h-6 w-6" />
+                </button>
+              </div>
 
-                {/* 하단 컨텐츠 영역 */}
-                <div className="flex flex-col w-full items-center my-5 overflow-y-auto ">
-                  <div className="flex w-full justify-center items-center gap-2 min-w-[300px]">
-                    <div className="relative flex-grow max-w-[calc(85%-7rem)] xl:max-w-[65%]">
-                      {/* 1:1 비율을 유지하는 이미지 컨테이너 */}
-                      <div className="w-full pb-[100%] relative">
-                        <img
-                          src={content.imageUrl}
-                          alt="Content"
-                          className="absolute rounded-md inset-0 object-cover w-full h-full"
-                        />
-                      </div>
-
-                      {/* 화살표 버튼 */}
-                      <ArrowButton direction="left" />
-                      <ArrowButton direction="right" />
-                      <div className="flex justify-between">
-                        <div className="flex">
-                          <FullHeart className="w-6 h-6 text-mainRed" />
-                          <EmptyHeart className="w-6 h-6" />
-                          숫자&nbsp;
-                          <ChatBubbleLeftIcon className="w-6 h-6" />0 1 2
-                          메세지수
-                        </div>
-                        <div>내꺼면 수정삭제</div>
-                      </div>
+              <div className="w-full max-w-lg mb-4">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-2">
+                    <FullHeart className="w-6 h-6 text-red-500" />
+                    <span>좋아요 수</span>
+                    <ChatBubbleLeftIcon className="w-6 h-6" />
+                    <span>댓글 수</span>
+                  </div>
+                  {content.isOwner && (
+                    <div className="space-x-2">
+                      <button className="text-toDoMid hover:underline">
+                        수정
+                      </button>
+                      <button className="text-red-500 hover:underline">
+                        삭제
+                      </button>
                     </div>
-                  </div>
-                  {/* 내용 */}
-                  <div className="mt-4 w-full text-center">
-                    <h2 className="text-xl font-bold">{content.title}</h2>
-                    <p>방문일시 어쩌고 타이틀</p>
-                    <div className="drawer-content">컨텐츠 내용</div>
-                    <div className="divider mx-[6rem]" />
-                    <div className="drawer-content">댓글 영역</div>
-                  </div>
-                  댓글입력
-                  <input className="input border-solid border-2 border-black" />
+                  )}
                 </div>
-              </>
-            )}
-          </div>
+              </div>
+
+              <div className="w-full max-w-lg">
+                <h2 className="text-xl font-bold mb-2">{content.title}</h2>
+                <p className="text-gray-600 mb-4">내용: {content.visitDate}</p>
+                <p className="mb-6">{content.description}</p>
+
+                <div className="border-t border-gray-200 pt-4 mb-4">
+                  <h3 className="font-semibold mb-2">댓글</h3>
+                  {/* 여기에 댓글 목록을 렌더링합니다 */}
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="text"
+                    placeholder="댓글을 입력하세요..."
+                    className="flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-0.5 focus:ring-mainBlue focus:border-mainBlue"
+                  />
+                  <button className="bg-mainBlue text-white px-4 py-2 rounded-md hover:bg-blue-500 transition-colors">
+                    작성
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
