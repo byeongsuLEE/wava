@@ -41,6 +41,8 @@ import GraphView from "./Graph/GraphView";
 import Filters from "./Calendar/Filters";
 import Calendar from "./Calendar";
 
+import callAssistant from "../../util/gpt";
+
 const DashboardContent = ({ calendarChange }) => {
   const [filter, setFilter] = useState({ type: "ALL", important: "ALL" });
   const [category, setCategory] = useState("WORQ"); // 카테고리 WORQ, important
@@ -50,6 +52,13 @@ const DashboardContent = ({ calendarChange }) => {
     // true면 important, false면 WORK/VACATION
     setCategory((state) => (state === "WORQ" ? "important" : "WORQ"));
   };
+
+  const [answer, setAnswer] = useState(null);
+  const ai_test = async() => {
+    const prompt = "안녕 Assistant?"
+    const comment = await callAssistant(prompt);
+    setAnswer(comment);
+  }
   return (
     <>
       <div className="bg-white text-mainTxt text-center flex flex-col h-full">
@@ -69,6 +78,14 @@ const DashboardContent = ({ calendarChange }) => {
         </div> */}
         <div className="w-full flex flex-col items-center shadow-md rounded-lg py-5 me-3 ms-1 my-3 flex-grow overflow-auto min-h-[200px]">
           <p>AI 출력 부분</p>
+           <button
+              type="button"
+              onClick={ai_test}
+              className="w-full h-10 border rounded-[10px] mt-3 mb-1 drop-shadow-md bg-[#1c77c3] text-white"
+            >
+              ai 호출
+          </button>
+          <p>{answer?.choices[0]?.message?.content}</p>
         </div>
       </div>
     </>
