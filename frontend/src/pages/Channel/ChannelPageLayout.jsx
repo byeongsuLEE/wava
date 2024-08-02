@@ -166,6 +166,7 @@ function ChannelPage() {
                 { id: "asdf" },
                 { id: "asdf" },
                 { id: "asdf" },
+                { id: "1`23" },
                 { id: "asdf" },
                 { id: "asdf" },
                 { id: "asdf" },
@@ -174,21 +175,20 @@ function ChannelPage() {
                 { id: "asdf" },
                 { id: "asdf" },
                 { id: "asdf" },
-                { id: "asdf" },
-                { id: "asdf" },
-                { id: "asdf" },
-                { id: "asdf" },
-                { id: "asdf" },
-                { id: "asdf" },
-                { id: "asdf" },
-                { id: "asdf" },
-                { id: "asdf" },
-                { id: "asdf" },
-                { id: "asdf" },
+                // { id: "asdf" },
+                // { id: "asdf" },
+                // { id: "asdf" },
+                // { id: "asdf" },
+                // { id: "asdf" },
+                // { id: "asdf" },
+                // { id: "asdf" },
+                // { id: "asdf" },
+                // { id: "asdf" },
+                // { id: "asdf" },
               ]}
             >
               <div className="sticky top-0 bg-white z-10">
-                <span>모임 채널</span>
+                <span className="text-sm">모임 채널</span>
               </div>
             </ChannelSubExplorer>
           </div>
@@ -198,11 +198,9 @@ function ChannelPage() {
             ref={infoChannelsRef}
             className="flex-1 overflow-y-auto text-center"
           >
-            <ChannelSubExplorer type="feed" data={[{ id: 3 }]}>
-              <div className="sticky top-0 bg-white z-10">
-                <span>정보 채널</span>
-              </div>
-            </ChannelSubExplorer>
+            <div className="sticky top-0 bg-white z-10">
+              <span className="text-sm">정보 채널</span>
+            </div>
 
             <div>
               <NavLink to={`/channel/feed`}>

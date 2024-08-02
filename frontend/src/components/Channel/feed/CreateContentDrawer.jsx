@@ -101,7 +101,7 @@ function CreateContentDrawer({ isOpen, onClose }) {
                     onClick={() => imgInput.current.click()}
                     className="w-full h-full border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors"
                   >
-                    <span className="text-gray-500">이미지를 등록</span>
+                    <span className="text-gray-500">이미지 등록</span>
                   </div>
                 ) : (
                   <>
