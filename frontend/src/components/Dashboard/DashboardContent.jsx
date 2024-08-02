@@ -41,7 +41,9 @@ import GraphView from "./Graph/GraphView";
 import Filters from "./Calendar/Filters";
 import Calendar from "./Calendar";
 
-import callAssistant from "../../util/gpt";
+// import callAssistant from "../../util/gpt";
+import mainLogic from "../../util/assistant-logic"
+import ReactMarkdown from "react-markdown"
 
 const DashboardContent = ({ calendarChange }) => {
   const [filter, setFilter] = useState({ type: "ALL", important: "ALL" });
@@ -52,11 +54,11 @@ const DashboardContent = ({ calendarChange }) => {
     // true면 important, false면 WORK/VACATION
     setCategory((state) => (state === "WORQ" ? "important" : "WORQ"));
   };
-
+  
   const [answer, setAnswer] = useState(null);
   const ai_test = async() => {
-    const prompt = "안녕 Assistant?"
-    const comment = await callAssistant(prompt);
+    const comment = await mainLogic();
+    console.log(comment)
     setAnswer(comment);
   }
   return (
@@ -85,7 +87,7 @@ const DashboardContent = ({ calendarChange }) => {
             >
               ai 호출
           </button>
-          <p>{answer?.choices[0]?.message?.content}</p>
+          <ReactMarkdown children={answer} />
         </div>
       </div>
     </>
