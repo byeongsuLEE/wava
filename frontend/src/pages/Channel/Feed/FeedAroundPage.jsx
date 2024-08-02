@@ -73,6 +73,18 @@ function FeedAroundPage() {
 
   const searchHandle = (searchText) => {};
 
+  const handleLike = (contentId, isLiked) => {
+    // API 호출을 통해 서버에 좋아요 상태 업데이트
+    // 예: api.updateLike(contentId, isLiked)
+    //     .then(() => {
+    //       // 필요한 경우 로컬 상태 업데이트
+    //     })
+    //     .catch(error => {
+    //       console.error("Failed to update like:", error);
+    //       // 에러 처리 로직
+    //     });
+  };
+
   return (
     <div className="flex h-full">
       <div className="flex flex-col flex-1">
@@ -85,6 +97,7 @@ function FeedAroundPage() {
           isOpen={isDrawerOpen}
           onClose={handleCloseDrawer}
           content={selectedContent}
+          onLike={handleLike}
         />
       </div>
     </div>

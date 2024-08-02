@@ -24,13 +24,19 @@ const ContentItemGrid = ({ onSelectContent, contents }) => {
         } 2xl:grid-cols-6 lg:grid-cols-4 md:grid-cols-3 gap-6 p-6`}
       >
         {contents?.map((content, index) => (
-          <div className="flex justify-center" key={index}>
+          <div className="flex justify-center relative group" key={index}>
             <img
               src={content.imageUrl}
               onClick={() => onSelectContent(content)}
               alt="Content"
               className="rounded-md cursor-pointer w-full"
             />
+            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity duration-300 rounded-md flex items-center justify-center pointer-events-none">
+              <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="mr-4">❤️ {content.likes}</span>
+                <span>💬 {content.comments}</span>
+              </div>
+            </div>
           </div>
         ))}
         {loading && (
