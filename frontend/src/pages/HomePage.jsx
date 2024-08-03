@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Carousel from "../components/Home/Carousel";
 import AnimatedDiv from "../components/Home/AnimatedDiv";
+import useDeviceStore from "../store/deviceStore";
 
 function HomePage() {
   const [animate, setAnimate] = useState(false);
+  const isMobile = useDeviceStore((state) => state.isMobile);
+
   useEffect(() => {
     setAnimate(true);
   }, []);
+
   return (
     <div className="w-full mx-auto">
       {/* 메인 Section */}
@@ -32,34 +36,20 @@ function HomePage() {
       {/* 카드 섹션 */}
       <section className="container mx-auto px-4 py-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="aspect-w-4 aspect-h-3">
-            <img
-              src="/assets/메인/진행중인 워케이션.png"
-              alt="정보"
-              className="object-cover w-full h-full rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
-            />
-          </div>
-          <div className="aspect-w-4 aspect-h-3">
-            <img
-              src="/assets/메인/대시보드.png"
-              alt="일정"
-              className="object-cover w-full h-full rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
-            />
-          </div>
-          <div className="aspect-w-4 aspect-h-3">
-            <img
-              src="/assets/메인/모임 채널.png"
-              alt="네트워킹"
-              className="object-cover w-full h-full rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
-            />
-          </div>
-          <div className="aspect-w-4 aspect-h-3">
-            <img
-              src="/assets/메인/개인 채널.png"
-              alt="소셜미디어"
-              className="object-cover w-full h-full rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
-            />
-          </div>
+          {[
+            "진행중인 워케이션.png",
+            "대시보드.png",
+            "모임 채널.png",
+            "개인 채널.png",
+          ].map((img, index) => (
+            <div key={index} className="aspect-w-4 aspect-h-3">
+              <img
+                src={`/assets/메인/${img}`}
+                alt={img.split(".")[0]}
+                className="object-cover w-full h-full rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
+              />
+            </div>
+          ))}
         </div>
       </section>
 
@@ -75,17 +65,27 @@ function HomePage() {
         <h1 className="text-4xl font-bold text-white transform -translate-y-64">
           워케이션이란?
         </h1>
-        <div className="absolute bottom-0 right-0 text-right p-4">
-          <p className="text-lg mt-2 text-white">
+        <div
+          className={`absolute bottom-0 right-0 text-right p-4 ${
+            isMobile ? "bg-black bg-opacity-30 rounded-lg w-full" : ""
+          }`}
+        >
+          <p className={`mt-2 text-white ${isMobile ? "text-sm" : "text-lg"}`}>
             Work(일), Vacation(휴가)의 합성어로,
           </p>
-          <p className="text-lg mt-2 text-white">집과 사무실에서 벗어나</p>
-          <p className="text-lg mt-2 text-white">
+          <p className={`mt-2 text-white ${isMobile ? "text-sm" : "text-lg"}`}>
+            집과 사무실에서 벗어나
+          </p>
+          <p className={`mt-2 text-white ${isMobile ? "text-sm" : "text-lg"}`}>
             휴가지에서 업무와 휴식을 동시에 경험하는
           </p>
-          <p className="text-lg mt-2 text-white">새로운 근무제도를 뜻합니다.</p>
-          <p className="text-lg mt-2 text-white">WAVA에서</p>
-          <p className="text-lg mt-2 text-white">
+          <p className={`mt-2 text-white ${isMobile ? "text-sm" : "text-lg"}`}>
+            새로운 근무제도를 뜻합니다.
+          </p>
+          <p className={`mt-2 text-white ${isMobile ? "text-sm" : "text-lg"}`}>
+            WAVA에서
+          </p>
+          <p className={`mt-2 text-white ${isMobile ? "text-sm" : "text-lg"}`}>
             일(Work)상에서 쉼표가 되는 순간을 기대해주세요!
           </p>
         </div>

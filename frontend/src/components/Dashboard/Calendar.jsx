@@ -272,7 +272,7 @@ const Calendar = ({ calendarRef }) => {
             title: "이벤트가 성공적으로 삭제되었습니다!",
             text: "",
             icon: "success",
-            timer: 1500,
+            timer: 1000,
             showConfirmButton: false,
           });
         } else {

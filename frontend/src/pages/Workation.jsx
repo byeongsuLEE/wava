@@ -91,7 +91,7 @@ function WorkationPage() {
         title: "확인해 주세요",
         text: "입력값이 잘못되었어요!",
         // footer: '<a href="#">Why do I have this issue?</a>',
-        timer: 3000,
+        timer: 1000,
       });
     } catch (e) {
       console.error(e, "workation create에러");
