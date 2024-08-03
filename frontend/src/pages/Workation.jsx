@@ -126,21 +126,25 @@ function WorkationPage() {
             location?.state?.type === "edit" ? (
               // 하단 수정 페이지 컨텐츠
               <>
-                워케이션을 수정합니다!
-                <br />
-                WAVA와 함께해 보아요!
-                <br />
-                문구 수정해주세요 ㅠㅠ...
+                <span className="text-black">
+                  워케이션 정보를{" "}
+                  <span className="text-vacationHigh">업데이트</span>하세요!
+                  <br />
+                  <span className="text-mainBlue glow">WAVA</span>와 함께 새로운{" "}
+                  <span className="text-toDoMid">경험</span>을 시작하세요!!
+                </span>
               </>
             ) : (
               // 수정 페이지 끝
               // 등록 페이지 컨텐츠
               <>
-                워케이션을 등록해 주세요!
-                <br />
-                WAVA를 시작해보아요!
-                <br />
-                문구 수정해주세요 ㅠㅠ...
+                <span className="text-black">
+                  워케이션을 <span className="text-vacationHigh">등록</span>
+                  해 주세요!
+                  <br />
+                  <span className="text-mainBlue">WAVA</span>와 함께{" "}
+                  <span className="text-toDoMid">워케이션</span>을 즐겨보세요!!
+                </span>
               </>
             )
             // 등록 페이지 끝

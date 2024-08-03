@@ -18,6 +18,8 @@ import ImportantRadio from "./Calendar/ImportantRadio";
 import Filters from "./Calendar/Filters";
 import MobileExplorer from "../common/MobileExplorer";
 
+import Swal from "sweetalert2";
+
 const Calendar = ({ calendarRef }) => {
   const [eventsTypeFilter, setEventsTypeFilter] = useState({
     type: "ALL",
@@ -153,6 +155,7 @@ const Calendar = ({ calendarRef }) => {
         title,
       },
     });
+
     const event = {
       id: state.clickInfo.event.id,
       title,
@@ -164,13 +167,35 @@ const Calendar = ({ calendarRef }) => {
       isFinish,
       type,
     };
+
     if (validateEvent(event)) {
-      const result = await updateEvent(event);
-      if (result) {
-        closeModal();
+      try {
+        const result = await updateEvent(event);
+        if (result) {
+          await Swal.fire({
+            icon: "success",
+            title: "수정 완료",
+            text: "이벤트가 성공적으로 수정되었습니다.",
+            timer: 1000,
+            showConfirmButton: false,
+          });
+          closeModal();
+        } else {
+          throw new Error("이벤트 수정 실패");
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "오류 발생",
+          text: "이벤트 수정 중 오류가 발생했습니다. 다시 시도해 주세요.",
+        });
       }
     } else {
-      alert("입력값을 확인해 주세요.");
+      Swal.fire({
+        icon: "warning",
+        title: "입력 오류",
+        text: "입력값을 확인해 주세요.",
+      });
     }
   };
 
@@ -188,21 +213,83 @@ const Calendar = ({ calendarRef }) => {
     };
 
     if (!validateEvent(newEvent)) {
-      return alert("입력값을 확인해 주세요.");
+      await Swal.fire({
+        icon: "warning",
+        title: "입력 오류",
+        text: "입력값을 확인해 주세요.",
+      });
+      return;
     }
 
-    await addEvent(newEvent);
-    closeModal();
+    try {
+      await addEvent(newEvent);
+      await Swal.fire({
+        icon: "success",
+        title: "이벤트 추가 완료",
+        text: "새로운 이벤트가 성공적으로 추가되었습니다.",
+        timer: 1000,
+        showConfirmButton: false,
+      });
+      closeModal();
+    } catch (error) {
+      await Swal.fire({
+        icon: "error",
+        title: "오류 발생",
+        text: "이벤트 추가 중 오류가 발생했습니다. 다시 시도해 주세요.",
+      });
+    }
   };
 
   // 삭제 함수
+  // const handleDelete = async () => {
+  //   const rst = await deleteEvent(state.clickInfo.event.id);
+  //   console.log(state.clickInfo.event.id);
+  //   if (rst) {
+  //     state.clickInfo.event.remove();
+  //   }
+  //   closeModal();
+  // };
   const handleDelete = async () => {
-    const rst = await deleteEvent(state.clickInfo.event.id);
-    console.log(state.clickInfo.event.id);
-    if (rst) {
-      state.clickInfo.event.remove();
+    try {
+      // 삭제 확인 대화상자
+      const confirmResult = await Swal.fire({
+        title: "이벤트를 삭제하시겠습니까?",
+        text: "이 작업은 되돌릴 수 없습니다!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "삭제",
+        cancelButtonText: "취소",
+      });
+
+      if (confirmResult.isConfirmed) {
+        const rst = await deleteEvent(state.clickInfo.event.id);
+        console.log(rst);
+
+        if (rst) {
+          state.clickInfo.event.remove();
+          console.log("in");
+          await Swal.fire({
+            title: "이벤트가 성공적으로 삭제되었습니다!",
+            text: "",
+            icon: "success",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        } else {
+          throw new Error("이벤트 삭제 실패");
+        }
+        closeModal();
+      }
+    } catch (error) {
+      console.error("이벤트 삭제 중 오류 발생:", error);
+      await Swal.fire({
+        icon: "error",
+        title: "오류 발생",
+        text: "이벤트 삭제 중 문제가 발생했습니다. 다시 시도해 주세요.",
+      });
     }
-    closeModal();
   };
 
   // 항목 클릭 -> 수정 모달 오픈

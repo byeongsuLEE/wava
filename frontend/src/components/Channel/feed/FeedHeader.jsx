@@ -140,6 +140,7 @@
 import React, { useState } from "react";
 import { Camera, Edit } from "lucide-react";
 import FollowDrawer from "./FollowDrawer";
+import useDeviceStore from "../../../store/deviceStore";
 
 const FeedHeader = ({
   openCreateDrawer,
@@ -147,6 +148,7 @@ const FeedHeader = ({
   initialBio = "전지훈의 개인 채널입니다.",
   userId,
 }) => {
+  const isMobile = useDeviceStore((state) => state.isMobile);
   const [name, setName] = useState(initialName);
   const [bio, setBio] = useState(initialBio);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -177,9 +179,11 @@ const FeedHeader = ({
   };
 
   return (
-    <div className="p-6">
-      <div className="flex items-start">
-        <div className="mr-6 relative">
+    <div className={isMobile ? "p-4" : "p-6"}>
+      <div
+        className={`flex ${isMobile ? "flex-col items-center" : "items-start"}`}
+      >
+        <div className={`relative ${isMobile ? "mb-4" : "mr-6"}`}>
           <img
             src="https://fastly.picsum.photos/id/184/250/250.jpg?hmac=6ULGFzE9ycGK0cgb3NB9AJG6Jt0_w_Ez-QWFZpWEFRI"
             alt="Profile"
@@ -199,16 +203,24 @@ const FeedHeader = ({
             accept="image/*"
           />
         </div>
-        <div className="flex-1">
-          <div className="flex justify-between items-center mb-2">
-            <div className="flex items-center">
+        <div className={`flex-1 ${isMobile ? "w-full" : ""}`}>
+          <div
+            className={`flex ${
+              isMobile
+                ? "flex-col items-center"
+                : "justify-between items-center"
+            } mb-2`}
+          >
+            <div className={`flex items-center ${isMobile ? "mb-2" : ""}`}>
               {isEditingName ? (
                 <div className="flex items-center">
                   <input
                     type="text"
                     value={name}
                     onChange={handleNameChange}
-                    className="text-2xl font-bold mr-2 p-1 border rounded"
+                    className={`${
+                      isMobile ? "text-xl" : "text-2xl"
+                    } font-bold mr-2 p-1 border rounded`}
                   />
                   <button
                     onClick={handleNameSubmit}
@@ -219,7 +231,13 @@ const FeedHeader = ({
                 </div>
               ) : (
                 <>
-                  <h1 className="text-2xl font-bold mr-2">{name}</h1>
+                  <h1
+                    className={`${
+                      isMobile ? "text-xl" : "text-2xl"
+                    } font-bold mr-2`}
+                  >
+                    {name}
+                  </h1>
                   <button
                     onClick={() => setIsEditingName(true)}
                     className="text-gray-500 hover:text-gray-700"
@@ -231,7 +249,9 @@ const FeedHeader = ({
             </div>
             <button
               onClick={openCreateDrawer}
-              className="px-4 py-2 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 transition-colors"
+              className={`px-4 py-2 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 transition-colors ${
+                isMobile ? "w-full" : ""
+              }`}
             >
               글 작성
             </button>
@@ -264,7 +284,11 @@ const FeedHeader = ({
               </div>
             )}
           </div>
-          <div className="text-sm text-gray-600">
+          <div
+            className={`text-sm text-gray-600 flex ${
+              isMobile ? "justify-center" : "justify-start"
+            }`}
+          >
             <button
               onClick={() => openFollowDrawer("following")}
               className="mr-4 hover:underline"

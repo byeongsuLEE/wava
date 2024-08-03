@@ -225,10 +225,21 @@ const ContentDrawer = ({
   };
 
   const handleDeleteClick = () => {
-    if (window.confirm("정말로 이 컨텐츠를 삭제하시겠습니까?")) {
-      onDelete(content.id);
-      onClose();
-    }
+    Swal.fire({
+      title: "정말로 이 컨텐츠를 삭제하시겠습니까?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "삭제",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        onDelete(content.id);
+        onClose();
+        Swal.fire("컨텐츠가 성공적으로 삭제되었습니다.", "", "success");
+      }
+    });
   };
 
   const handleImageChange = (e) => {
@@ -327,17 +338,33 @@ const ContentDrawer = ({
                     <div className="flex space-x-2">
                       <button
                         onClick={handleEditClick}
-                        className="text-mainBlue hover:bg-mainBlue hover:text-white px-3 py-1 rounded transition-colors duration-200 flex items-center"
+                        className={`${
+                          isMobile
+                            ? "p-2"
+                            : "text-mainBlue hover:bg-mainBlue hover:text-white px-3 py-1"
+                        } rounded transition-colors duration-200 flex items-center`}
                       >
-                        <PencilIcon className="h-4 w-4 mr-1" />
-                        수정
+                        <PencilIcon
+                          className={`h-4 w-4 ${
+                            isMobile ? "text-mainBlue" : "mr-1"
+                          }`}
+                        />
+                        {!isMobile && "수정"}
                       </button>
                       <button
                         onClick={handleDeleteClick}
-                        className="text-red-500 hover:bg-red-500 hover:text-white px-3 py-1 rounded transition-colors duration-200 flex items-center"
+                        className={`${
+                          isMobile
+                            ? "p-2"
+                            : "text-red-500 hover:bg-red-500 hover:text-white px-3 py-1"
+                        } rounded transition-colors duration-200 flex items-center`}
                       >
-                        <TrashIcon className="h-4 w-4 mr-1" />
-                        삭제
+                        <TrashIcon
+                          className={`h-4 w-4 ${
+                            isMobile ? "text-red-500" : "mr-1"
+                          }`}
+                        />
+                        {!isMobile && "삭제"}
                       </button>
                     </div>
                   )}
