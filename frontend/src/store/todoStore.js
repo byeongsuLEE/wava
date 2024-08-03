@@ -44,6 +44,7 @@ const useTodoStore = create((set) => ({
       set((state) => ({
         events: state.events.filter((event) => event.id !== id),
       }));
+      return true;
     } else {
       alert("delete 에러");
       return false;

@@ -265,11 +265,9 @@ const Calendar = ({ calendarRef }) => {
 
       if (confirmResult.isConfirmed) {
         const rst = await deleteEvent(state.clickInfo.event.id);
-        console.log(rst);
 
         if (rst) {
           state.clickInfo.event.remove();
-          console.log("in");
           await Swal.fire({
             title: "이벤트가 성공적으로 삭제되었습니다!",
             text: "",
