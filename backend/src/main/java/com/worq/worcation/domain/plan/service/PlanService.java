@@ -10,7 +10,7 @@ public interface PlanService {
 
     void deletePlan( Long planId);
 
-    List<PlanResponseDto> viewPlan(PlanRequestDto planRequestDto);
+    List<PlanResponseDto> viewPlan(Long dashboardId);
 
     PlanResponseDto updatePlan(PlanRequestDto planRequestDto, Long planId);
 }

@@ -50,9 +50,10 @@ public class PlanServiceImpl implements PlanService {
         planRepository.deleteById(planId);
     }
 
+
     @Override
-    public List<PlanResponseDto> viewPlan(PlanRequestDto planRequestDto) {
-        List<Plan> plans = planRepository.findByDashboard_id(123123L);
+    public List<PlanResponseDto> viewPlan(Long dashboardId) {
+        List<Plan> plans = planRepository.findByDashboard_id(dashboardId);
         return plans.stream()
                 .map(plan -> PlanResponseDto.builder()
                         .id(plan.getId())

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,9 +39,9 @@ public class PlanController {
         }
     }
     @GetMapping("/view")
-    public ResponseEntity<?> viewPlan(@RequestBody PlanRequestDto planRequestDto){
+    public ResponseEntity<?> viewPlan(@AuthenticationPrincipal Long dashboardId){
         try {
-            List<PlanResponseDto> response = planService.viewPlan(planRequestDto);
+            List<PlanResponseDto> response = planService.viewPlan(dashboardId);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return  ResponseEntity.status(500).body("일시적인 오류가 발생했습니다");
@@ -51,7 +52,7 @@ public class PlanController {
         try {
             PlanResponseDto response = planService.updatePlan(planRequestDto,planId);
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
+        } catch (Exception e){
             return  ResponseEntity.status(500).body("일시적인 오류가 발생했습니다");
         }
     }
