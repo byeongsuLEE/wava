@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatDto {
     private Long channelId;
+    private String nickName;
     private String message;
 }

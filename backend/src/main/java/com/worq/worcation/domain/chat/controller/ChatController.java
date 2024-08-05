@@ -23,10 +23,12 @@ public class ChatController {
     private final SimpMessagingTemplate template;
     private final ChatService chatService;
 
+//    ,@Header(name = "Authorization") String token
     @MessageMapping("/message")
-    public ChatDto sendChat(@Payload ChatDto chatDto,@Header(name = "Authorization") String token) {
-        template.convertAndSend("/sub/chatroom/" + chatDto.getChannelId(), chatDto);
-        chatService.saveChat(chatDto,token.substring(7));
+    public ChatDto sendChat(@Payload ChatDto chatDto) {
+//        template.convertAndSend("/sub/chatroom/" + chatDto.getChannelId(), chatDto);
+        template.convertAndSend("/sub/chatroom/1", chatDto);
+//        chatService.saveChat(chatDto,token.substring(7));
         return chatDto;
     }
 
