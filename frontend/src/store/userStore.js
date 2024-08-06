@@ -43,7 +43,7 @@ const useUserStore = create(
               await Swal.fire({
                 position: "center",
                 icon: "error",
-                titleText: errorMessage || "네트워크 연결을 확인해 주세요",
+                titleText: errorMessage || "로그인 실패!",
                 showConfirmButton: false,
                 timer: 2500,
               });

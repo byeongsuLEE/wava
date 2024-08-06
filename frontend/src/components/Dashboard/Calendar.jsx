@@ -88,7 +88,6 @@ const Calendar = ({ calendarRef }) => {
       default:
         break;
     }
-    console.log(events);
     if (Array.isArray(filtered)) {
       setFilteredEvents(filtered);
     }
@@ -240,15 +239,6 @@ const Calendar = ({ calendarRef }) => {
     }
   };
 
-  // 삭제 함수
-  // const handleDelete = async () => {
-  //   const rst = await deleteEvent(state.clickInfo.event.id);
-  //   console.log(state.clickInfo.event.id);
-  //   if (rst) {
-  //     state.clickInfo.event.remove();
-  //   }
-  //   closeModal();
-  // };
   const handleDelete = async () => {
     try {
       // 삭제 확인 대화상자
@@ -354,9 +344,6 @@ const Calendar = ({ calendarRef }) => {
           right: isMobile
             ? false
             : "dayGridMonth,timeGridWeek,threeDays,timeGridDay",
-          // right: isMobile
-          // ? "prev,next dayGridMonth,threeDays"
-          // : "prev,today,next dayGridMonth,timeGridWeek,threeDays,timeGridDay",
         }}
         footerToolbar={
           isMobile
