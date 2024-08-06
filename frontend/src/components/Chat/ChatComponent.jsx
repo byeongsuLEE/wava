@@ -110,7 +110,7 @@ function ChatComponent() {
 
   return (
     <>
-      <div className="flex flex-col items-end me-3">
+      <div className="flex flex-col items-end me-0.5">
         <div className="bg-blue-400 w-full flex flex-col rounded-t-lg overflow-y-auto min-h-screen max-h-screen">
           {messages.map((item, index) => (
             <div key={index} className="m-4">

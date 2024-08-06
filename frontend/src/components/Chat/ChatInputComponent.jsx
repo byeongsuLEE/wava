@@ -4,7 +4,7 @@ import { ArrowUpCircleIcon } from "@heroicons/react/24/outline";
 function ChatInputComponent(props) {
   return (
     <>
-      <div className="mb-3 p-2 w-full flex shadow-md rounded-b-lg">
+      <div className="mb-0.5 p-2 w-full flex shadow-md rounded-b-lg">
         <input
           type="text"
           value={props.inputValue}
