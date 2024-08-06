@@ -20,10 +20,13 @@ export default function useCountNum(end, start = 0, duration = 2000) {
         clearInterval(counter);
       }
     }, frameRate);
+<<<<<<< HEAD
 
     return () => {
       clearInterval(counter);
     };
+=======
+>>>>>>> dev-backend
   }, [end, frameRate, start, totalFrame]);
 
   return count;

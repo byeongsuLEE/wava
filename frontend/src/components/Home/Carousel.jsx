@@ -34,7 +34,11 @@ const carouselItems = [
   {
     title: "데스커",
     image: "/assets/팜플렛/데스커 팜플렛.png",
+<<<<<<< HEAD
     url: "https://www.deskerworcation.com/",
+=======
+    url: "https://www.deskerworkation.com/",
+>>>>>>> dev-backend
   },
   {
     title: "부산",
@@ -59,12 +63,20 @@ const carouselItems = [
   {
     title: "제주도",
     image: "/assets/팜플렛/제주 팜플렛.png",
+<<<<<<< HEAD
     url: "https://jejuworcation.or.kr/",
+=======
+    url: "https://jejuworkation.or.kr/",
+>>>>>>> dev-backend
   },
   {
     title: "충청남도",
     image: "/assets/팜플렛/충남 팜플렛.png",
+<<<<<<< HEAD
     url: "https://cnctf.or.kr/site/worcation/main.php",
+=======
+    url: "https://cnctf.or.kr/site/workation/main.php",
+>>>>>>> dev-backend
   },
 ];
 
@@ -78,15 +90,24 @@ const CarouselComponent = () => {
       additionalTransfrom={0}
       arrows
       autoPlay
+<<<<<<< HEAD
       autoPlaySpeed={3000}
       centerMode={true}
+=======
+      autoPlaySpeed={4500}
+      centerMode={false}
+>>>>>>> dev-backend
       className=""
       containerClass="container-with-dots"
       dotListClass=""
       draggable
       focusOnSelect={false}
       infinite
+<<<<<<< HEAD
       itemClass="flex justify-center items-center"
+=======
+      itemClass=""
+>>>>>>> dev-backend
       keyBoardControl
       minimumTouchDrag={80}
       pauseOnHover
@@ -104,6 +125,7 @@ const CarouselComponent = () => {
       swipeable
     >
       {carouselItems.map((item, index) => (
+<<<<<<< HEAD
         <div
           key={index}
           className="bg-transparent w-full px-2 flex flex-col items-center"
@@ -129,6 +151,21 @@ const CarouselComponent = () => {
               </span>
             </button>
           </figure>
+=======
+        <div key={index} className="card bg-transparent w-96 mx-auto">
+          <figure className="relative">
+            <img src={item.image} alt={item.title} />
+            <button
+              className="btn bg-transparent border border-white absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white"
+              onClick={() => openInNewTab(item.url)}
+            >
+              이동하기
+            </button>
+          </figure>
+          <div className="card-body items-center p-4 bg-transparent">
+            <h2 className="card-title text-mainTxt font-bold">{item.title}</h2>
+          </div>
+>>>>>>> dev-backend
         </div>
       ))}
     </Carousel>

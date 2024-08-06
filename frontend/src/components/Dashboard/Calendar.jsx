@@ -155,7 +155,6 @@ const Calendar = ({ calendarRef }) => {
         title,
       },
     });
-
     const event = {
       id: state.clickInfo.event.id,
       title,
