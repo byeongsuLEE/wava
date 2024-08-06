@@ -8,6 +8,7 @@ import ChatInputComponent from "./ChatInputComponent";
 import useUserStore from "../../store/userStore";
 // axios 추가
 import { Stomp } from "@stomp/stompjs";
+import { Client } from "@stomp/stompjs";
 
 function ChatComponent() {
   // URL에서 채팅방 ID를 가져옴
@@ -25,6 +26,7 @@ function ChatComponent() {
   // 컴포넌트 마운트 시 실행. 웹소켓 연결 및 초기 메시지 로딩
   const [profileImg, setProfileImg] = useState(null);
   const [customerSeq, setCustomerSeq] = useState("");
+  const [connected, setConnected] = useState(false);
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
