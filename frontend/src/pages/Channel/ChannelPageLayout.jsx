@@ -15,13 +15,14 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import CustomModal from "../../components/common/customModal";
 import CreateGroupChannel from "../../components/Channel/group/CreateGroupChannel";
 import useUserStore from "../../store/userStore";
+import { createGroupChannelAPI } from "../../api/groupChannelApi";
 
 function ChannelPage() {
   const isMobile = useDeviceStore((state) => state.isMobile);
   const userInfo = useUserStore((state) => state.userInfo);
 
   const myChannelRef = useRef(null);
-  const meetingChannelsRef = useRef(null);
+  const groupChannelsRef = useRef(null);
   const infoChannelsRef = useRef(null);
 
   const { userId } = useParams();
@@ -29,14 +30,21 @@ function ChannelPage() {
   const location = useLocation();
 
   const [isCreateChannelOpen, setIsCreateChannelOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
+  // useLayoutEffect(() => {
+  //   // 현재 경로가 정확히 '/channel'일 때만 리다이렉트
+  //   if (location.pathname?.replaceAll("/", "") === "channel") {
+  //     const userId = "12345"; // 여기에 실제 접속자 ID를 넣으세요
+  //     navigate(`/channel/feed/${userId}`);
+  //   }
+  // }, [location.pathname, navigate, userId]);
   useLayoutEffect(() => {
-    // 현재 경로가 정확히 '/channel'일 때만 리다이렉트
-    if (location.pathname?.replaceAll("/", "") === "channel") {
-      const userId = "12345"; // 여기에 실제 접속자 ID를 넣으세요
-      navigate(`/channel/feed/${userId}`);
+    if (location.pathname === "/channel") {
+      navigate(`/channel/feed/${userInfo?.id || "guest"}`);
     }
-  }, [location.pathname, navigate, userId]);
+  }, [location.pathname, navigate, userInfo]);
 
   const handleMouseEvents = (ref) => {
     let isDown = false;
@@ -126,10 +134,10 @@ function ChannelPage() {
 
   React.useEffect(() => {
     handleMouseEvents(myChannelRef);
-    handleMouseEvents(meetingChannelsRef);
+    handleMouseEvents(groupChannelsRef);
     handleMouseEvents(infoChannelsRef);
     handleTouchEvents(myChannelRef);
-    handleTouchEvents(meetingChannelsRef);
+    handleTouchEvents(groupChannelsRef);
     handleTouchEvents(infoChannelsRef);
   }, []);
 
@@ -142,6 +150,33 @@ function ChannelPage() {
   const handleChannelPortalClose = () => {
     setIsCreateChannelOpen(false);
   };
+
+  // 그룹 채널 생성 함수
+  const createGroupChannel = async (channelName) => {
+    setIsLoading(true);
+    setError(null);
+
+    const success = (newChannel) => {
+      console.log(`그룹 채널 "${channelName}"이(가) 생성되었습니다.`);
+      handleChannelPortalClose();
+      // 새로 생성된 채널로 이동
+      navigate(`/channel/group/${newChannel.id}`);
+    };
+
+    const fail = (error) => {
+      console.error("채널 생성 실패:", error);
+      setError(
+        error.response?.data?.message || "채널 생성 중 오류가 발생했습니다."
+      );
+    };
+
+    try {
+      await createGroupChannelAPI(channelName, success, fail);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="flex h-screen ">
@@ -192,7 +227,7 @@ function ChannelPage() {
 
           {/* 모임채널 */}
           <div
-            ref={meetingChannelsRef}
+            ref={groupChannelsRef}
             className=" flex-1 overflow-y-auto text-center mb-2"
           >
             <ChannelSubExplorer
@@ -254,7 +289,12 @@ function ChannelPage() {
         isOpen={isCreateChannelOpen}
         onClose={handleChannelPortalClose}
       >
-        <CreateGroupChannel onClose={handleChannelPortalClose} />
+        <CreateGroupChannel
+          onClose={handleChannelPortalClose}
+          onSubmit={createGroupChannel}
+          isLoading={isLoading}
+          error={error}
+        />
       </CustomModal>
     </>
   );
