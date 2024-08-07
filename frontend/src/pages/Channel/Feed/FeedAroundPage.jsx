@@ -48,7 +48,6 @@ import { useEffect, useState } from "react";
 import ContentDrawer from "../../../components/Channel/feed/ContentDrawer";
 import ContentItemGrid from "../../../components/Channel/feed/ContentItemGrid";
 import FeedSearchBar from "../../../components/Channel/feed/FeedSearchbar";
-import { get_feedData } from "../../../api/dummy";
 import { searchFeedRequest } from "../../../api/channelFeedApi";
 
 // Modify the dummy data to include author information
@@ -104,6 +103,7 @@ function FeedAroundPage() {
       <div className="flex flex-col flex-1">
         <FeedSearchBar searchHandle={searchHandle} />
         <ContentItemGrid
+          loadMore={null}
           contents={contents}
           onSelectContent={handleSelectContent}
         />

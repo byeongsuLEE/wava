@@ -81,6 +81,13 @@ const useUserStore = create(
             },
             (error) => {
               console.log(error);
+              console.log("서버 연결 에러");
+              set(() => ({ isLogin: false }));
+              set(() => ({ isLoginError: false }));
+              set(() => ({ isValidToken: false }));
+              sessionStorage.removeItem("accessToken");
+              sessionStorage.removeItem("refreshToken");
+              localStorage.removeItem("userStorage");
             }
           );
         } catch (e) {

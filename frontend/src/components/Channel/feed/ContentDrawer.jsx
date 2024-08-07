@@ -143,7 +143,7 @@
 
 // 수정 및 삭제 기능 간단 구현 -> 수정 필요 위는 수정 삭제 없는 클린 코드
 // 댓글, 프로필 클릭->이동, 게시글 수정/삭제,
-import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
+import React, { useState, useRef, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useDeviceStore from "../../../store/deviceStore";
 import useUserStore from "../../../store/userStore";
@@ -191,6 +191,7 @@ const ContentDrawer = ({
   const [writedComment, setWritedComment] = useState("");
 
   const [isFetching, setIsFecthing] = useState(false);
+
   useLayoutEffect(() => {
     // 임시
     const getData = async () => {
@@ -217,7 +218,7 @@ const ContentDrawer = ({
     };
 
     getData();
-  }, [feedId]);
+  }, [feedId, userInfo?.nickName]);
 
   const handleAuthorClick = () => {
     if (feedContent && feedContent?.nickName) {

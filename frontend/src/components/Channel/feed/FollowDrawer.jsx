@@ -78,6 +78,7 @@ const FollowDrawer = ({
 
   const getFollowButtonText = (followStatus) => {
     switch (followStatus) {
+      default:
       case "none":
       case "follower":
         return "팔로우";

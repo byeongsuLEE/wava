@@ -1,6 +1,4 @@
-import { nanoid } from "nanoid";
 import { localAxios as local } from "../util/http-commons";
-import { get_feedData } from "./dummy";
 
 const address = "/channel";
 
@@ -49,39 +47,36 @@ const handleRequest = async (requestFunction) => {
  * @returns {Promise<feedReturn>} 피드 콘텐츠를 포함한 객체를 반환합니다
  */
 export const readFeedContentRequest = async (id, pageNo = 1) => {
-  return get_feedData;
+  // return get_feedData;
   return await handleRequest(() =>
     local.get(address + "/personal/" + id + "/feed?pages=" + pageNo)
   );
 };
 
 // 개인 채널의  정보
-export const readFeedInfoRequest = async (id) => {
-  return {
-    email: "wava@wava.com",
-    nickname: "전지훈",
-    sido: "광주광역시",
-    sigungu: "광산구",
-    description: "전지훈의 개인 채널입니다.",
-    profileImage:
-      "https://fastly.picsum.photos/id/184/250/250.jpg?hmac=6ULGFzE9ycGK0cgb3NB9AJG6Jt0_w_Ez-QWFZpWEFRI",
-    follow: 1,
-    follower: 1,
-    feedCount: 1,
-  };
-
+export const readFeedInfoRequest = async (nickName) => {
+  // return {
+  //   email: "wava@wava.com",
+  //   nickname: "전지훈",
+  //   sido: "광주광역시",
+  //   sigungu: "광산구",
+  //   description: "전지훈의 개인 채널입니다.",
+  //   profileImage:
+  //     "https://fastly.picsum.photos/id/184/250/250.jpg?hmac=6ULGFzE9ycGK0cgb3NB9AJG6Jt0_w_Ez-QWFZpWEFRI",
+  //   follow: 1,
+  //   follower: 1,
+  //   feedCount: 1,
+  // };
   return await handleRequest(() =>
-    local.get(address + "/personal/" + id + "/info")
+    local.get(address + "/personal/" + nickName + "/info")
   );
 };
 
 // 헤더 덮어씌워서 명시적으로 지정
 // 피드 생성
 export const createFeedRequest = async (data) => {
-  // const token = localStorage.getItem("authToken");
-  const token = "MYTOKEN";
+  const token = sessionStorage.getItem("accessToken");
   if (token) {
-    return true;
     return await handleRequest(() =>
       local.post(address + "/feed/create", data, {
         headers: {
@@ -97,48 +92,47 @@ export const createFeedRequest = async (data) => {
 
 // 피드 디테일 보기
 export const readOneFeedDetailRequest = async (id) => {
-  return {
-    id: 1,
-    userId: 1,
-    nickName: "닉네임위치",
-    profile: "https://picsum.photos/250/250",
-    content: "오늘날씨좋다",
-    isLiked: true,
-    heart: 222,
+  // return {
+  //   id: 1,
+  //   userId: 1,
+  //   nickName: "닉네임위치",
+  //   profile: "https://picsum.photos/250/250",
+  //   content: "오늘날씨좋다",
+  //   isLiked: true,
+  //   heart: 222,
 
-    image: [
-      {
-        imageName: nanoid(),
-        imageUrl: "https://loremflickr.com/600/400",
-      },
-      {
-        imageName: nanoid(),
-        imageUrl: "https://loremflickr.com/600/400",
-      },
-    ],
-    comment: [
-      {
-        id: 1,
-        userId: 1234,
-        nickName: "와바사용자2",
-        profile: "https://loremflickr.com/600/400",
-        comment: "와정말좋아요",
-      },
-      {
-        id: 2,
-        userId: 3324,
-        nickName: "와바사용자3",
-        profile: "https://loremflickr.com/600/400",
-        comment: "와진짜대단해요",
-      },
-    ],
-  };
+  //   image: [
+  //     {
+  //       imageName: nanoid(),
+  //       imageUrl: "https://loremflickr.com/600/400",
+  //     },
+  //     {
+  //       imageName: nanoid(),
+  //       imageUrl: "https://loremflickr.com/600/400",
+  //     },
+  //   ],
+  //   comment: [
+  //     {
+  //       id: 1,
+  //       userId: 1234,
+  //       nickName: "와바사용자2",
+  //       profile: "https://loremflickr.com/600/400",
+  //       comment: "와정말좋아요",
+  //     },
+  //     {
+  //       id: 2,
+  //       userId: 3324,
+  //       nickName: "와바사용자3",
+  //       profile: "https://loremflickr.com/600/400",
+  //       comment: "와진짜대단해요",
+  //     },
+  //   ],
+  // };
   return await handleRequest(() => local.get(address + "/feed/" + id));
 };
 
 // 피드에 코멘트 작성
 export const createCommentFeedRequest = async (id, data) => {
-  return true;
   return await handleRequest(() =>
     local.post(`${address}/${id}/comment`, data)
   );
@@ -156,8 +150,6 @@ export const deleteLikeFeedRequest = async (id) => {
 
 // 피드 검색 -> 에러 핸들링 할 것 ->마지막페이지, 페이지아웃
 export const searchFeedRequest = async (keyword = "") => {
-  return get_feedData;
-
   return await handleRequest(() => local.get(`${address}/search?q=${keyword}`));
 };
 
@@ -185,8 +177,7 @@ export const readFollowerUserRequest = async (nickName) => {
 // 헤더 덮어씌워서 명시적으로 지정
 // 프로필 이미지 저장
 export const createProfileImageRequest = async (nickName, data) => {
-  // const token = localStorage.getItem("authToken");
-  const token = "MYTOKEN";
+  const token = sessionStorage.getItem("accessToken");
   if (token) {
     return await handleRequest(() =>
       local.post(`personal/${nickName}/profile`, data, {

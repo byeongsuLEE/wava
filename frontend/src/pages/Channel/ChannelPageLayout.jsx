@@ -33,10 +33,12 @@ function ChannelPage() {
   useLayoutEffect(() => {
     // 현재 경로가 정확히 '/channel'일 때만 리다이렉트
     if (location.pathname?.replaceAll("/", "") === "channel") {
-      const userId = "12345"; // 여기에 실제 접속자 ID를 넣으세요
-      navigate(`/channel/feed/${userId}`);
+      const myId = userInfo?.nickName; // 여기에 실제 접속자 ID를 넣으세요
+      if (myId) {
+        navigate(`/channel/feed/${myId}`);
+      }
     }
-  }, [location.pathname, navigate, userId]);
+  }, [location.pathname, navigate, userId, userInfo?.nickName]);
 
   const handleMouseEvents = (ref) => {
     let isDown = false;
@@ -164,6 +166,7 @@ function ChannelPage() {
               <NavLink to={`/channel/feed/${"내아이디"}`}>
                 {userInfo?.profile ? (
                   <img
+                    alt="profile"
                     src={userInfo?.profile}
                     className="w-10 h-10 mx-auto my-0.5 bg-gray-300 rounded-full"
                   />

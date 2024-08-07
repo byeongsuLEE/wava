@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import useDeviceStore from "../../../store/deviceStore";
 
@@ -9,10 +9,10 @@ const ContentItemGrid = ({ loadMore, onSelectContent, contents, loading }) => {
   });
 
   useEffect(() => {
-    if (inView) {
+    if (inView && loadMore) {
       loadMore();
     }
-  }, [inView]);
+  }, [inView, loadMore]);
 
   return (
     <>
