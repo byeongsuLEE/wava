@@ -14,7 +14,7 @@ import axios from "axios";
 
 // 싱글턴 패턴으로 axios 인스턴스 생성
 const localAxios = axios.create({
-  baseURL: process.env.REACT_APP_SERVER_ADDRESS,
+  baseURL: "http://localhost:8080/api",
   headers: {
     "Content-Type": "application/json",
   },
