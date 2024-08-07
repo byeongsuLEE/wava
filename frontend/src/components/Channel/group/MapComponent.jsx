@@ -1,15 +1,12 @@
 // import React, { useEffect, useState, useRef, useCallback } from "react";
 // import debounce from "lodash/debounce";
 
-// const MapComponent = ({
-//   data,
-//   onMapChange,
-//   searchKeyword,
-//   setSearchResults,
-// }) => {
+// const MapComponent = ({ data, onMapChange }) => {
 //   const [map, setMap] = useState(null);
 //   const [error, setError] = useState(null);
-//   const [localSearchKeyword, setLocalSearchKeyword] = useState(searchKeyword);
+//   const [searchKeyword, setSearchKeyword] = useState("");
+//   const [searchResults, setSearchResults] = useState([]);
+//   const [pagination, setPagination] = useState(null);
 //   const searchMarkers = useRef([]);
 //   const mapContainerRef = useRef(null);
 
@@ -21,12 +18,6 @@
 //       }
 //       const script = document.createElement("script");
 //       script.type = "text/javascript";
-//       // const apiKey = process.env.REACT_APP_KAKAO_MAPS_API_KEY;
-//       // if (!apiKey) {
-//       //   console.error("Kakao Maps API 키가 설정되지 않았습니다.");
-//       //   setError("API 키 설정 오류");
-//       //   return;
-//       // }
 //       script.src =
 //         "https://dapi.kakao.com/v2/maps/sdk.js?appkey=9584401db12054d451fc9e18279c5719&autoload=false&libraries=services";
 //       script.onload = () => {
@@ -34,142 +25,148 @@
 //           resolve();
 //         });
 //       };
-//       script.onerror = (e) => {
-//         console.error("Kakao Maps 스크립트 로드 실패:", e);
-//         setError(
-//           "Kakao Maps 스크립트를 불러오는 데 실패했습니다. 네트워크 연결을 확인해주세요."
-//         );
-//         reject(e);
-//       };
+//       script.onerror = reject;
 //       document.head.appendChild(script);
 //     });
 //   }, []);
-
-//   const initializeMap = useCallback(() => {
-//     if (!data || !data.center || !window.kakao || !window.kakao.maps) {
-//       setError(
-//         "맵 데이터가 올바르지 않거나 Kakao Maps API가 로드되지 않았습니다."
-//       );
-//       return;
-//     }
-
-//     const options = {
-//       center: new window.kakao.maps.LatLng(data.center.lat, data.center.lng),
-//       level: data.level || 3,
-//     };
-//     const kakaoMap = new window.kakao.maps.Map(
-//       mapContainerRef.current,
-//       options
-//     );
-//     console.log("지도 생성 완료:", kakaoMap);
-//     setMap(kakaoMap);
-
-//     window.kakao.maps.event.addListener(kakaoMap, "center_changed", () => {
-//       const center = kakaoMap.getCenter();
-//       onMapChange(
-//         { lat: center.getLat(), lng: center.getLng() },
-//         kakaoMap.getLevel()
-//       );
-//     });
-
-//     window.kakao.maps.event.addListener(kakaoMap, "zoom_changed", () => {
-//       const center = kakaoMap.getCenter();
-//       onMapChange(
-//         { lat: center.getLat(), lng: center.getLng() },
-//         kakaoMap.getLevel()
-//       );
-//     });
-//   }, [data, onMapChange]);
 
 //   useEffect(() => {
 //     let isMounted = true;
 //     loadKakaoMapsScript()
 //       .then(() => {
-//         if (isMounted) {
-//           initializeMap();
-//         }
+//         if (!isMounted) return;
+
+//         const options = {
+//           center: new window.kakao.maps.LatLng(
+//             data.center.lat,
+//             data.center.lng
+//           ),
+//           level: data.level || 3,
+//         };
+//         const newMap = new window.kakao.maps.Map(
+//           mapContainerRef.current,
+//           options
+//         );
+//         setMap(newMap);
+
+//         window.kakao.maps.event.addListener(newMap, "center_changed", () => {
+//           const center = newMap.getCenter();
+//           onMapChange(
+//             { lat: center.getLat(), lng: center.getLng() },
+//             newMap.getLevel()
+//           );
+//         });
+
+//         window.kakao.maps.event.addListener(newMap, "zoom_changed", () => {
+//           const center = newMap.getCenter();
+//           onMapChange(
+//             { lat: center.getLat(), lng: center.getLng() },
+//             newMap.getLevel()
+//           );
+//         });
 //       })
 //       .catch((err) => {
-//         console.error("카카오 맵 초기화 실패:", err);
 //         if (isMounted) {
-//           setError("지도를 불러오는 데 실패했습니다. 에러: " + err.message);
+//           console.error("지도를 불러오는 데 실패했습니다:", err);
+//           setError("지도를 불러오는 데 실패했습니다: " + err.message);
 //         }
 //       });
+
 //     return () => {
 //       isMounted = false;
 //     };
-//   }, [loadKakaoMapsScript, initializeMap]);
+//   }, [loadKakaoMapsScript, data, onMapChange]);
 
-//   const searchPlaces = useCallback(() => {
-//     if (!map || !localSearchKeyword || !window.kakao || !window.kakao.maps)
-//       return;
+//   useEffect(() => {
+//     if (map) {
+//       map.setCenter(
+//         new window.kakao.maps.LatLng(data.center.lat, data.center.lng)
+//       );
+//       map.setLevel(data.level);
+//     }
+//   }, [map, data.center, data.level]);
 
-//     const places = new window.kakao.maps.services.Places();
+//   const searchPlaces = useCallback(
+//     (page) => {
+//       if (!map || !searchKeyword || searchKeyword.length < 2) return;
 
-//     places.keywordSearch(localSearchKeyword, (result, status) => {
-//       if (status === window.kakao.maps.services.Status.OK) {
-//         const bounds = new window.kakao.maps.LatLngBounds();
+//       const places = new window.kakao.maps.services.Places();
 
-//         // 이전 검색 마커 제거
-//         searchMarkers.current.forEach((marker) => marker.setMap(null));
-//         searchMarkers.current = [];
+//       places.keywordSearch(
+//         searchKeyword,
+//         (result, status, pagination) => {
+//           if (status === window.kakao.maps.services.Status.OK) {
+//             const bounds = new window.kakao.maps.LatLngBounds();
 
-//         const newSearchResults = result.map((place) => {
-//           const marker = new window.kakao.maps.Marker({
-//             map: map,
-//             position: new window.kakao.maps.LatLng(place.y, place.x),
-//           });
+//             // Clear previous markers
+//             searchMarkers.current.forEach((marker) => marker.setMap(null));
+//             searchMarkers.current = [];
 
-//           searchMarkers.current.push(marker);
-//           bounds.extend(new window.kakao.maps.LatLng(place.y, place.x));
+//             const newSearchResults = result.map((place) => {
+//               const position = new window.kakao.maps.LatLng(place.y, place.x);
+//               const marker = new window.kakao.maps.Marker({
+//                 map: map,
+//                 position: position,
+//               });
 
-//           return {
-//             id: place.id,
-//             place_name: place.place_name,
-//             location: { lat: place.y, lng: place.x },
-//           };
-//         });
+//               const infowindow = new window.kakao.maps.InfoWindow({
+//                 content: `<div style="padding:5px;font-size:12px;">${place.place_name}</div>`,
+//               });
 
-//         setSearchResults(newSearchResults);
-//         map.setBounds(bounds);
-//       } else if (status === window.kakao.maps.services.Status.ZERO_RESULT) {
-//         alert("검색 결과가 존재하지 않습니다.");
-//         setSearchResults([]);
-//       } else if (status === window.kakao.maps.services.Status.ERROR) {
-//         alert("검색 중 오류가 발생했습니다.");
-//         setSearchResults([]);
-//       }
-//     });
-//   }, [map, localSearchKeyword, setSearchResults]);
+//               window.kakao.maps.event.addListener(marker, "mouseover", () => {
+//                 infowindow.open(map, marker);
+//               });
 
-//   // 디바운스된 검색 함수
-//   const debouncedSearch = useCallback(
-//     debounce(() => {
-//       searchPlaces();
-//     }, 300),
-//     [searchPlaces]
+//               window.kakao.maps.event.addListener(marker, "mouseout", () => {
+//                 infowindow.close();
+//               });
+
+//               searchMarkers.current.push(marker);
+//               bounds.extend(position);
+
+//               return {
+//                 id: place.id,
+//                 place_name: place.place_name,
+//                 address_name: place.address_name,
+//                 road_address_name: place.road_address_name,
+//                 phone: place.phone,
+//                 location: { lat: place.y, lng: place.x },
+//               };
+//             });
+
+//             setSearchResults(newSearchResults);
+//             setPagination(pagination);
+//             map.setBounds(bounds);
+//           } else if (status === window.kakao.maps.services.Status.ZERO_RESULT) {
+//             alert("검색 결과가 존재하지 않습니다.");
+//             setSearchResults([]);
+//             setPagination(null);
+//           } else if (status === window.kakao.maps.services.Status.ERROR) {
+//             alert("검색 중 오류가 발생했습니다.");
+//             setSearchResults([]);
+//             setPagination(null);
+//           }
+//         },
+//         { page }
+//       );
+//     },
+//     [map, searchKeyword]
 //   );
 
-//   useEffect(() => {
-//     setLocalSearchKeyword(searchKeyword);
-//   }, [searchKeyword]);
-
-//   useEffect(() => {
-//     if (localSearchKeyword.length >= 2) {
-//       debouncedSearch();
-//     }
-//   }, [localSearchKeyword, debouncedSearch]);
-
 //   const handleSearchInputChange = (e) => {
-//     setLocalSearchKeyword(e.target.value);
+//     setSearchKeyword(e.target.value);
 //   };
 
 //   const handleSearchButtonClick = () => {
-//     if (localSearchKeyword.length >= 2) {
-//       searchPlaces();
+//     if (searchKeyword.length >= 2) {
+//       searchPlaces(1);
 //     } else {
 //       alert("검색어를 2글자 이상 입력해주세요.");
 //     }
+//   };
+
+//   const handlePageClick = (page) => {
+//     searchPlaces(page);
 //   };
 
 //   if (error) {
@@ -177,277 +174,359 @@
 //   }
 
 //   return (
-//     <div>
-//       <div>
-//         <input
-//           type="text"
-//           value={localSearchKeyword}
-//           onChange={handleSearchInputChange}
-//           placeholder="검색어를 입력하세요"
-//         />
-//         <button onClick={handleSearchButtonClick}>검색</button>
-//       </div>
+//     <div
+//       className="map_wrap"
+//       style={{ width: "100%", height: "500px", position: "relative" }}
+//     >
 //       <div
+//         id="map"
 //         ref={mapContainerRef}
-//         style={{ width: "100%", height: "" }}
-//       ></div>
+//         style={{
+//           width: "100%",
+//           height: "100%",
+//           position: "absolute",
+//           top: "0",
+//           left: "0",
+//         }}
+//       />
+//       <div id="menu_wrap" className="bg_white">
+//         <div className="option">
+//           <div>
+//             <input
+//               type="text"
+//               value={searchKeyword}
+//               onChange={handleSearchInputChange}
+//               id="keyword"
+//               size="15"
+//             />
+//             <button onClick={handleSearchButtonClick}>검색하기</button>
+//           </div>
+//         </div>
+//         <hr />
+//         <ul id="placesList">
+//           {searchResults.map((result, index) => (
+//             <li key={result.id} className="item">
+//               <span className={`markerbg marker_${index + 1}`} />
+//               <div className="info">
+//                 <h5>{result.place_name}</h5>
+//                 {result.road_address_name && (
+//                   <span>{result.road_address_name}</span>
+//                 )}
+//                 <span className="jibun gray">{result.address_name}</span>
+//                 <span className="tel">{result.phone}</span>
+//               </div>
+//             </li>
+//           ))}
+//         </ul>
+//         {pagination && (
+//           <div id="pagination">
+//             {pagination.current > 1 && (
+//               <a
+//                 href="#"
+//                 onClick={() => handlePageClick(pagination.current - 1)}
+//               >
+//                 &lt;
+//               </a>
+//             )}
+//             {Array.from({ length: pagination.last }, (_, i) => i + 1).map(
+//               (page) => (
+//                 <a
+//                   key={page}
+//                   href="#"
+//                   onClick={() => handlePageClick(page)}
+//                   className={page === pagination.current ? "on" : ""}
+//                 >
+//                   {page}
+//                 </a>
+//               )
+//             )}
+//             {pagination.current < pagination.last && (
+//               <a
+//                 href="#"
+//                 onClick={() => handlePageClick(pagination.current + 1)}
+//               >
+//                 &gt;
+//               </a>
+//             )}
+//           </div>
+//         )}
+//       </div>
 //     </div>
 //   );
 // };
 
 // export default MapComponent;
-import React, { useEffect, useState, useRef, useCallback } from "react";
-import debounce from "lodash/debounce";
 
-const MapComponent = ({ data, onMapChange }) => {
+// 검색, 검색결과, 검색결과창마우스오버인포출력, 검색결과마커초기화, 초기화후지도뷰유지, 드로잉매니저
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import swal from "sweetalert2";
+
+const MapComponent = () => {
+  const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
-  const [error, setError] = useState(null);
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [pagination, setPagination] = useState(null);
-  const searchMarkers = useRef([]);
-  const mapContainerRef = useRef(null);
-
-  const loadKakaoMapsScript = useCallback(() => {
-    return new Promise((resolve, reject) => {
-      if (window.kakao && window.kakao.maps) {
-        resolve();
-        return;
-      }
-      const script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src =
-        "https://dapi.kakao.com/v2/maps/sdk.js?appkey=9584401db12054d451fc9e18279c5719&autoload=false&libraries=services";
-      script.onload = () => {
-        window.kakao.maps.load(() => {
-          resolve();
-        });
-      };
-      script.onerror = reject;
-      document.head.appendChild(script);
-    });
-  }, []);
+  const [drawingManager, setDrawingManager] = useState(null);
+  const [places, setPlaces] = useState([]);
+  const [keyword, setKeyword] = useState("");
+  const [lastSearchBounds, setLastSearchBounds] = useState(null);
+  const [markers, setMarkers] = useState([]);
+  const infowindow = useRef(null);
 
   useEffect(() => {
-    let isMounted = true;
-    loadKakaoMapsScript()
-      .then(() => {
-        if (!isMounted) return;
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=9584401db12054d451fc9e18279c5719&libraries=services,drawing&autoload=false`;
+    document.head.appendChild(script);
 
-        const options = {
-          center: new window.kakao.maps.LatLng(
-            data.center.lat,
-            data.center.lng
-          ),
-          level: data.level || 3,
+    script.onload = () => {
+      window.kakao.maps.load(() => {
+        const mapOption = {
+          center: new window.kakao.maps.LatLng(37.566826, 126.9786567),
+          level: 3,
         };
-        const newMap = new window.kakao.maps.Map(
-          mapContainerRef.current,
-          options
+        const createdMap = new window.kakao.maps.Map(
+          mapContainer.current,
+          mapOption
         );
-        setMap(newMap);
+        setMap(createdMap);
 
-        window.kakao.maps.event.addListener(newMap, "center_changed", () => {
-          const center = newMap.getCenter();
-          onMapChange(
-            { lat: center.getLat(), lng: center.getLng() },
-            newMap.getLevel()
-          );
+        infowindow.current = new window.kakao.maps.InfoWindow({
+          zIndex: 1,
+          removable: true,
         });
 
-        window.kakao.maps.event.addListener(newMap, "zoom_changed", () => {
-          const center = newMap.getCenter();
-          onMapChange(
-            { lat: center.getLat(), lng: center.getLng() },
-            newMap.getLevel()
-          );
+        // 도형 관리자 생성
+        const manager = new window.kakao.maps.drawing.DrawingManager({
+          map: createdMap,
+          drawingMode: [
+            window.kakao.maps.drawing.OverlayType.MARKER,
+            window.kakao.maps.drawing.OverlayType.POLYLINE,
+            window.kakao.maps.drawing.OverlayType.RECTANGLE,
+            window.kakao.maps.drawing.OverlayType.CIRCLE,
+            window.kakao.maps.drawing.OverlayType.POLYGON,
+          ],
+          guideTooltip: ["draw", "drag", "edit"],
+          markerOptions: {
+            draggable: true,
+            removable: true,
+          },
+          polylineOptions: {
+            draggable: true,
+            removable: true,
+            editable: true,
+          },
+          rectangleOptions: {
+            draggable: true,
+            removable: true,
+            editable: true,
+          },
+          circleOptions: {
+            draggable: true,
+            removable: true,
+            editable: true,
+          },
+          polygonOptions: {
+            draggable: true,
+            removable: true,
+            editable: true,
+          },
         });
-      })
-      .catch((err) => {
-        if (isMounted) {
-          console.error("지도를 불러오는 데 실패했습니다:", err);
-          setError("지도를 불러오는 데 실패했습니다: " + err.message);
-        }
+        setDrawingManager(manager);
       });
+    };
 
     return () => {
-      isMounted = false;
+      document.head.removeChild(script);
     };
-  }, [loadKakaoMapsScript, data, onMapChange]);
+  }, []);
 
-  useEffect(() => {
-    if (map) {
-      map.setCenter(
-        new window.kakao.maps.LatLng(data.center.lat, data.center.lng)
-      );
-      map.setLevel(data.level);
+  const searchPlaces = useCallback(() => {
+    if (!map) return;
+
+    const ps = new window.kakao.maps.services.Places();
+
+    if (!keyword.trim()) {
+      setPlaces([]);
+      return;
     }
-  }, [map, data.center, data.level]);
 
-  const searchPlaces = useCallback(
-    (page) => {
-      if (!map || !searchKeyword || searchKeyword.length < 2) return;
+    ps.keywordSearch(keyword, (data, status, pagination) => {
+      if (status === window.kakao.maps.services.Status.OK) {
+        setPlaces(data);
 
-      const places = new window.kakao.maps.services.Places();
+        const bounds = new window.kakao.maps.LatLngBounds();
+        const newMarkers = [];
 
-      places.keywordSearch(
-        searchKeyword,
-        (result, status, pagination) => {
-          if (status === window.kakao.maps.services.Status.OK) {
-            const bounds = new window.kakao.maps.LatLngBounds();
+        data.forEach((place, i) => {
+          const marker = displayMarker(place);
+          newMarkers.push(marker);
+          bounds.extend(new window.kakao.maps.LatLng(place.y, place.x));
+        });
 
-            // Clear previous markers
-            searchMarkers.current.forEach((marker) => marker.setMap(null));
-            searchMarkers.current = [];
+        setMarkers((prevMarkers) => [...prevMarkers, ...newMarkers]);
+        map.setBounds(bounds);
+        setLastSearchBounds(bounds);
+      } else {
+        setPlaces([]);
+        swal.fire({
+          title: "검색 결과가 없습니다.",
+          icon: "warning",
+        });
+      }
+    });
+  }, [map, keyword]);
 
-            const newSearchResults = result.map((place) => {
-              const position = new window.kakao.maps.LatLng(place.y, place.x);
-              const marker = new window.kakao.maps.Marker({
-                map: map,
-                position: position,
-              });
+  const displayMarker = useCallback(
+    (place) => {
+      if (!map) return null;
 
-              const infowindow = new window.kakao.maps.InfoWindow({
-                content: `<div style="padding:5px;font-size:12px;">${place.place_name}</div>`,
-              });
+      const marker = new window.kakao.maps.Marker({
+        map: map,
+        position: new window.kakao.maps.LatLng(place.y, place.x),
+      });
 
-              window.kakao.maps.event.addListener(marker, "mouseover", () => {
-                infowindow.open(map, marker);
-              });
+      window.kakao.maps.event.addListener(marker, "click", () => {
+        infowindow.current.setContent(
+          '<div style="padding:5px;font-size:12px;">' +
+            place.place_name +
+            "</div>"
+        );
+        infowindow.current.open(map, marker);
+      });
 
-              window.kakao.maps.event.addListener(marker, "mouseout", () => {
-                infowindow.close();
-              });
+      window.kakao.maps.event.addListener(marker, "mouseover", () => {
+        displayInfowindow(marker, place.place_name);
+      });
 
-              searchMarkers.current.push(marker);
-              bounds.extend(position);
+      window.kakao.maps.event.addListener(marker, "mouseout", () => {
+        infowindow.current.close();
+      });
 
-              return {
-                id: place.id,
-                place_name: place.place_name,
-                address_name: place.address_name,
-                road_address_name: place.road_address_name,
-                phone: place.phone,
-                location: { lat: place.y, lng: place.x },
-              };
-            });
-
-            setSearchResults(newSearchResults);
-            setPagination(pagination);
-            map.setBounds(bounds);
-          } else if (status === window.kakao.maps.services.Status.ZERO_RESULT) {
-            alert("검색 결과가 존재하지 않습니다.");
-            setSearchResults([]);
-            setPagination(null);
-          } else if (status === window.kakao.maps.services.Status.ERROR) {
-            alert("검색 중 오류가 발생했습니다.");
-            setSearchResults([]);
-            setPagination(null);
-          }
-        },
-        { page }
-      );
+      return marker;
     },
-    [map, searchKeyword]
+    [map]
   );
 
-  const handleSearchInputChange = (e) => {
-    setSearchKeyword(e.target.value);
+  const displayInfowindow = (marker, title) => {
+    infowindow.current.setContent(
+      '<div style="padding:5px;font-size:12px;">' + title + "</div>"
+    );
+    infowindow.current.open(map, marker);
   };
 
-  const handleSearchButtonClick = () => {
-    if (searchKeyword.length >= 2) {
-      searchPlaces(1);
-    } else {
-      alert("검색어를 2글자 이상 입력해주세요.");
+  useEffect(() => {
+    if (map && lastSearchBounds) {
+      map.setBounds(lastSearchBounds);
     }
-  };
+  }, [map, lastSearchBounds]);
 
-  const handlePageClick = (page) => {
-    searchPlaces(page);
-  };
+  const handleDrawingModeChange = useCallback(
+    (mode) => {
+      if (drawingManager) {
+        drawingManager.cancel();
+        drawingManager.select(window.kakao.maps.drawing.OverlayType[mode]);
+      }
+    },
+    [drawingManager]
+  );
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  const resetMap = useCallback(() => {
+    if (!map) return;
+
+    // 모든 마커 제거
+    markers.forEach((marker) => marker.setMap(null));
+    setMarkers([]);
+
+    // 검색 결과 초기화
+    setPlaces([]);
+    setKeyword("");
+
+    // 마지막 검색 경계 초기화
+    setLastSearchBounds(null);
+
+    // 현재 지도 뷰는 유지
+  }, [map, markers]);
 
   return (
-    <div
-      className="map_wrap"
-      style={{ width: "100%", height: "500px", position: "relative" }}
-    >
-      <div
-        id="map"
-        ref={mapContainerRef}
-        style={{
-          width: "100%",
-          height: "100%",
-          position: "absolute",
-          top: "0",
-          left: "0",
-        }}
-      />
-      <div id="menu_wrap" className="bg_white">
-        <div className="option">
-          <div>
-            <input
-              type="text"
-              value={searchKeyword}
-              onChange={handleSearchInputChange}
-              id="keyword"
-              size="15"
-            />
-            <button onClick={handleSearchButtonClick}>검색하기</button>
-          </div>
-        </div>
-        <hr />
-        <ul id="placesList">
-          {searchResults.map((result, index) => (
-            <li key={result.id} className="item">
-              <span className={`markerbg marker_${index + 1}`} />
-              <div className="info">
-                <h5>{result.place_name}</h5>
-                {result.road_address_name && (
-                  <span>{result.road_address_name}</span>
-                )}
-                <span className="jibun gray">{result.address_name}</span>
-                <span className="tel">{result.phone}</span>
-              </div>
+    <div className="flex flex-col h-full">
+      <div className="p-4 flex space-x-2">
+        <input
+          type="text"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          placeholder="검색할 키워드를 입력하세요"
+          className="p-2 border rounded flex-grow"
+        />
+        <button
+          onClick={searchPlaces}
+          className="p-2 bg-blue-500 text-white rounded"
+        >
+          검색하기
+        </button>
+        <button
+          onClick={resetMap}
+          className="p-2 bg-red-500 text-white rounded"
+        >
+          초기화
+        </button>
+      </div>
+      <div className="p-2 flex space-x-2">
+        <button
+          onClick={() => handleDrawingModeChange("MARKER")}
+          className="p-2 bg-green-500 text-white rounded"
+        >
+          마커
+        </button>
+        <button
+          onClick={() => handleDrawingModeChange("POLYLINE")}
+          className="p-2 bg-green-500 text-white rounded"
+        >
+          선
+        </button>
+        <button
+          onClick={() => handleDrawingModeChange("RECTANGLE")}
+          className="p-2 bg-green-500 text-white rounded"
+        >
+          사각형
+        </button>
+        <button
+          onClick={() => handleDrawingModeChange("CIRCLE")}
+          className="p-2 bg-green-500 text-white rounded"
+        >
+          원
+        </button>
+        <button
+          onClick={() => handleDrawingModeChange("POLYGON")}
+          className="p-2 bg-green-500 text-white rounded"
+        >
+          다각형
+        </button>
+      </div>
+      <div ref={mapContainer} className="flex-grow"></div>
+      <div className="p-4 overflow-y-auto max-h-40">
+        <ul>
+          {places.map((place, index) => (
+            <li
+              id={`place-item-${index}`}
+              key={index}
+              className="mb-2"
+              onMouseOver={() =>
+                displayInfowindow(markers[index], place.place_name)
+              }
+              onMouseOut={() => infowindow.current.close()}
+            >
+              <span className="font-bold">{place.place_name}</span>
+              {place.road_address_name && (
+                <span className="block text-sm text-gray-600">
+                  {place.road_address_name}
+                </span>
+              )}
+              <span className="block text-sm text-gray-600">
+                {place.address_name}
+              </span>
+              <span className="block text-sm text-gray-600">{place.phone}</span>
             </li>
           ))}
         </ul>
-        {pagination && (
-          <div id="pagination">
-            {pagination.current > 1 && (
-              <a
-                href="#"
-                onClick={() => handlePageClick(pagination.current - 1)}
-              >
-                &lt;
-              </a>
-            )}
-            {Array.from({ length: pagination.last }, (_, i) => i + 1).map(
-              (page) => (
-                <a
-                  key={page}
-                  href="#"
-                  onClick={() => handlePageClick(page)}
-                  className={page === pagination.current ? "on" : ""}
-                >
-                  {page}
-                </a>
-              )
-            )}
-            {pagination.current < pagination.last && (
-              <a
-                href="#"
-                onClick={() => handlePageClick(pagination.current + 1)}
-              >
-                &gt;
-              </a>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );
