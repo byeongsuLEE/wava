@@ -45,7 +45,14 @@ public class StompHandler implements ChannelInterceptor {
                 break;
             case SUBSCRIBE :
                 String destination = accessor.getDestination(); // SUBSCRIBE로 들어온 매핑 주소 추출
-                Long channelId = Long.parseLong(destination.substring("/sub/chatroom/".length())); // 채널아이디 추출
+                Long channelId = null;
+
+                if (destination.startsWith("/ws")) {
+                    channelId = Long.parseLong(destination.substring("/sub/chatroom/".length()));
+                } else if (destination.startsWith("/cursor")) {
+                    channelId = Long.parseLong(destination.substring("/sub/cursorroom/".length()));
+                }
+                 // 채널아이디 추출
                 List<ChannelUser> channelUsers = channelUserRepository.findByChannelId(channelId); // 채널에 가입되어있는 유저 리스트
                 String userToken = accessor.getFirstNativeHeader("Authorization"); // 헤더에서 토큰 추출
 
