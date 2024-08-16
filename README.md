@@ -18,7 +18,7 @@ C204의 역작!
 
 
 ## UCC
-![ucc](./exec/11기 공통프로젝트 4조 팀 WAVA UCC .mp4)
+![ucc](./exec/wava_ucc.mp4)
 
 ## WAVA 팀원 소개
 
