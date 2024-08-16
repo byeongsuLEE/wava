@@ -18,7 +18,7 @@ C204의 역작!
 
 
 ## UCC
-[비디오 보기](https://github.com/byeongsuLEE/ssafy-common-wava/raw/master/exec/wava_ucc.mp4)
+[비디오 보기](https://raw.githubusercontent.com/byeongsuLEE/ssafy-common-wava/master/exec/wava_ucc.mp4)
 ## WAVA 팀원 소개
 
 | **전지훈(팀장) [FE]**                                          | **김민주** [FE]                                                                      | **한세훈** [FE]                                                       |
